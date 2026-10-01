@@ -92,7 +92,7 @@ const at = (t: number, ts: number[], vs: number[]) =>
 // then gathering into her own shadow (ぎゅっとしがみついた) and fading with it.
 export const kimiAt = (t: number) => ({
   presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.5, 0.5, 0]),
-  blur: at(t, [232, 238, 248], [2, 2, 6]), // px, on top of the shadow's own softening
+  blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]), // px, crisp under the sun, softened by the return
   gather: at(t, [238, 248], [0, 1]), // 0 = beside her, 1 = on her rest point
 });
 ```

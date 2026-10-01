@@ -87,6 +87,17 @@ describe("kimiAt", () => {
     expect(kimiAt(150).presence).toBeLessThan(kimiAt(120).presence);
   });
 
+  test("beside her under the sun, 君's shadow is as crisp as hers", () => {
+    for (const t of [80, 120, 150]) expect(kimiAt(t).blur, `t=${t}`).toBe(0);
+  });
+
+  test("君 leaves with the sun", () => {
+    expect(kimiAt(157).presence).toBeCloseTo(0.6);
+    expect(kimiAt(166).presence).toBe(0);
+    expect(kimiAt(162).presence).toBeGreaterThan(0);
+    expect(kimiAt(162).presence).toBeLessThan(0.6);
+  });
+
   test("君 returns blurred in the light through the clouds and gathers into her shadow", () => {
     expect(kimiAt(235).blur).toBeGreaterThan(0);
     let last = -1;

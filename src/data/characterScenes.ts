@@ -127,8 +127,11 @@ const at = (t: number, ts: number[], vs: number[]) =>
 // 君 only exists as a shadow, so only where there is light: beside her under the setting sun,
 // fading scene by scene, gone with the sun, back blurred (滲む) in the light through the clouds,
 // then gathering into her own shadow (ぎゅっとしがみついた) and fading with it.
+// Only read inside the scenes that have a companion (sunset, play, hug, cling), times their own fade.
 export const kimiAt = (t: number) => ({
   presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.5, 0.5, 0]),
-  blur: at(t, [232, 238, 248], [2, 2, 6]), // px, on top of the shadow's own softening
+  // px on top of the shadow's own softening: as crisp as hers under the sun, ramping up while 君 is
+  // absent at night so 君 returns already softened
+  blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]),
   gather: at(t, [238, 248], [0, 1]), // 0 = beside her, 1 = on her rest point
 });
