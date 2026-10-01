@@ -17,6 +17,9 @@ export type CharacterScene = {
   // Needed when something drawn nearer the viewer (a guitar on the grass) hangs lower than she does.
   rest?: [number, number];
   shadow: Shadow;
+  // 君, drawn only as a cast shadow beside her: figure png, its root's offset from her rest point
+  // (fraction of the frame width, negative = toward the light on the left) and its drawn height.
+  companion?: { id: "kimi-sit" | "kimi-stand"; aspect: number; dx: number; h: number };
 };
 
 // Left edge of the widest lyric block (three vertical columns), fraction of the frame width.
@@ -46,6 +49,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     tint: 0.4,
     rest: [0.15, 0.905],
     shadow: { skew: 60, length: 0.3, opacity: 0.35 },
+    companion: { id: "kimi-sit", aspect: 695 / 848, dx: -0.08, h: 0.26 },
   },
   // interlude: playing on the ground
   {
@@ -56,6 +60,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     h: 0.26,
     tint: 0.4,
     shadow: { skew: 60, length: 0.3, opacity: 0.35 },
+    companion: { id: "kimi-sit", aspect: 695 / 848, dx: -0.08, h: 0.27 },
   },
   // 傷跡 / 抱きしめてる: eyes shut, holding the guitar tight
   {
@@ -66,6 +71,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     h: 0.36,
     tint: 0.45,
     shadow: { skew: 65, length: 0.35, opacity: 0.3 },
+    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.05, h: 0.41 },
   },
   // 君の声が遠くなる: looking up at the stars
   {
@@ -96,6 +102,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     h: 0.36,
     tint: 0.35,
     shadow: { skew: 25, length: 0.2, opacity: 0.3 },
+    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.05, h: 0.41 },
   },
 ];
 
@@ -135,3 +142,19 @@ export const kimiAt = (t: number) => ({
   blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]),
   gather: at(t, [238, 248], [0, 1]), // 0 = beside her, 1 = on her rest point
 });
+
+// Where 君's (unseen) figure stands: its root sits on the ground beside her rest point
+// and slides onto it as 君 gathers into her shadow.
+export const placeCompanion = (
+  scene: CharacterScene,
+  t: number,
+  width: number,
+  height: number,
+  ground: (x: number) => number,
+) => {
+  const { id, aspect, dx, h } = scene.companion!;
+  const her = placeScene(scene, width, height, ground);
+  const [rx] = scene.rest ?? [0.5, 1];
+  const rootX = her.left + rx * her.w + dx * width * (1 - kimiAt(t).gather);
+  return { id, ...placeScene({ ...scene, aspect, h, x: rootX / width, rest: undefined }, width, height, ground) };
+};

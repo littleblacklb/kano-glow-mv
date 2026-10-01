@@ -1,6 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { envelope } from "./timeline";
-import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, kimiAt, placeScene, shadowMatrix } from "./characterScenes";
+import {
+  CHARACTER_SCENES,
+  FEET_SINK,
+  LYRIC_COLUMN_LEFT,
+  kimiAt,
+  placeCompanion,
+  placeScene,
+  shadowMatrix,
+} from "./characterScenes";
 
 const ASPECT_16_9 = 1080 / 1920;
 
@@ -107,5 +115,30 @@ describe("kimiAt", () => {
     }
     expect(kimiAt(248).gather).toBe(1);
     expect(kimiAt(252).presence).toBe(0);
+  });
+});
+
+describe("placeCompanion", () => {
+  const ground = (x: number) => 900 - x * 0.05;
+  const withKimi = CHARACTER_SCENES.filter((s) => s.companion);
+
+  test("君 belongs to the lit scenes only", () => {
+    expect(withKimi.map((s) => s.id)).toEqual(["sunset", "play", "hug", "cling"]);
+  });
+
+  test("君 stands on the ground to her left, not under her", () => {
+    for (const scene of withKimi) {
+      const her = placeScene(scene, 1920, 1080, ground);
+      const kimi = placeCompanion(scene, 200, 1920, 1080, ground); // gather is 0 at 200
+      expect(kimi.left + kimi.w / 2, scene.id).toBeLessThan(her.left);
+      expect(kimi.top + kimi.h, scene.id).toBeCloseTo(ground(kimi.left + kimi.w / 2) + FEET_SINK);
+    }
+  });
+
+  test("once gathered, 君's root is her rest point", () => {
+    const cling = withKimi.find((s) => s.id === "cling")!;
+    const her = placeScene(cling, 1920, 1080, ground);
+    const kimi = placeCompanion(cling, 250, 1920, 1080, ground);
+    expect(kimi.left + kimi.w / 2).toBeCloseTo(her.left + her.w / 2);
   });
 });
