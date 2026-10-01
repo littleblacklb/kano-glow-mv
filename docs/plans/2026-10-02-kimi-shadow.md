@@ -30,7 +30,7 @@ for id in "$@"; do
     cat "$style"
 ```
 
-(`rain` → `rain.style.txt` doesn't exist → `style.txt`; `kimi-sit` → `kimi.style.txt`.)
+(`rain` → `rain.style.txt` doesn't exist → `style.txt`; `kimi-sit` → `kimi.style.txt`.) The printf header's "using the attached cover.jpeg as the character/style reference" becomes "as the reference image described below", so each style block's "Reference image" line says how the reference is used (`style.txt`: character and style; `kimi.style.txt`: style only).
 
 **Step 2:** `art/prompts/kimi.style.txt`: same art-style, composition and green-background paragraphs as `style.txt`, but the character paragraph describes a different person: "a slender person slightly taller than a young teen, gender-neutral, short tousled hair, a long plain coat and trousers, simple shoes. NOT the girl in the reference: no horns, no chick, no scarf, no guitar. The reference is for drawing style only." Add: "Clear, readable silhouette: limbs separated from the body where the pose allows."
 
