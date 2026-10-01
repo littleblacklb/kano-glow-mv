@@ -98,6 +98,18 @@ describe("CLOSE_UPS", () => {
     }
   });
 
+  test("erased in the wide shot, she is made whole only behind the close-up, which draws her back", () => {
+    for (const scene of CHARACTER_SCENES.filter((s) => s.erase)) {
+      const { from, to, until } = scene.erase!;
+      expect(to, scene.id).toBeGreaterThan(from);
+      expect(until, scene.id).toBeGreaterThan(to);
+      expect(closeUpCover(until), scene.id).toBe(1);
+      const shot = CLOSE_UPS.find((c) => c.pose === scene.id)!;
+      expect(shot.redraw![0]).toBe(until);
+      expect(shot.redraw![1]).toBeLessThan(shot.window[2]);
+    }
+  });
+
   test("the wide pose it cuts back to is already standing there", () => {
     for (const c of CLOSE_UPS) {
       const pose = CHARACTER_SCENES.find((s) => s.id === c.pose)!;

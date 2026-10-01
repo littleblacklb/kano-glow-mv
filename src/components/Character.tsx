@@ -11,7 +11,8 @@ import {
 } from "../data/characterScenes";
 import { CLOSE_UPS, closeUpCover, closeUpPush, type CloseUp } from "../data/camera";
 import { envelope, skyAt, W } from "../data/timeline";
-import { boilFrame, mix, onThrees } from "../lib/draw";
+import { boilFrame, mix, onThrees, ramp } from "../lib/draw";
+import { erasePolygons, revealPolygons, toClipPath } from "../lib/strokes";
 import { Sky } from "./Backdrop";
 import { groundPoints, groundY } from "./Scenery";
 
@@ -83,6 +84,38 @@ const FigureFilter: React.FC<{ id: string; t: number; tint: number }> = ({ id, t
 
 type Box = { left: number; top: number; w: number; h: number; origin: string };
 
+// What the strokes leave of her: she can't be rubbed out all the way (消えて 消してよ, yet still holding on).
+const GHOST = 0.18;
+
+// Stroke-by-stroke erasing or drawing back over `range`, as a clip-path for a w×h element.
+const strokesClip = (
+  kind: "erase" | "redraw",
+  range: [number, number],
+  t: number,
+  w: number,
+  h: number,
+  n: number,
+  seed: string,
+) =>
+  toClipPath(
+    (kind === "erase" ? erasePolygons : revealPolygons)(ramp(onThrees(t), range[0], range[1]), w, h, {
+      n,
+      seed,
+      boil: boilFrame(t),
+    }),
+  );
+
+// A figure, or while strokes clip it, a faint ghost of all of her under the part the strokes leave.
+const Figure: React.FC<{ src: string; style: React.CSSProperties; clip?: string }> = ({ src, style, clip }) =>
+  clip === undefined ? (
+    <Img src={src} style={style} />
+  ) : (
+    <>
+      <Img src={src} style={{ ...style, opacity: GHOST }} />
+      <Img src={src} style={{ ...style, clipPath: clip }} />
+    </>
+  );
+
 // A figure's silhouette laid on the ground from its rest point, clipped so it never rises into the sky.
 const CastShadow: React.FC<{
   id: string; // unique per shadow, names its filter
@@ -92,7 +125,8 @@ const CastShadow: React.FC<{
   t: number;
   opacity: number;
   blur?: number; // extra softening, px
-}> = ({ id, src, box, shadow, t, opacity, blur = 0 }) => {
+  clip?: string; // erased along with her, in the figure's own px
+}> = ({ id, src, box, shadow, t, opacity, blur = 0, clip }) => {
   const { width, height } = useVideoConfig();
   const [a, b, c, d] = shadowMatrix(shadow);
   const ground = groundPoints(width, height);
@@ -126,6 +160,7 @@ const CastShadow: React.FC<{
             transformOrigin: box.origin,
             // the image is sunk FEET_SINK into the ground; the shadow starts at the line itself
             transform: `matrix(${a}, ${b}, ${c}, ${d}, 0, ${-FEET_SINK})`,
+            clipPath: clip,
           }}
         />
       </AbsoluteFill>
@@ -145,6 +180,11 @@ const SceneCharacter: React.FC<{
   const k = kimiAt(t);
   const kimi =
     scene.companion && k.presence > 0 ? placeCompanion(scene, t, width, height, (x) => groundY(x, height)) : null;
+  const { erase } = scene;
+  const clip =
+    erase && t >= erase.from && t < erase.until
+      ? strokesClip("erase", [erase.from, erase.to], t, her.w, her.h, 7, id)
+      : undefined;
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
@@ -161,10 +201,11 @@ const SceneCharacter: React.FC<{
           blur={k.blur}
         />
       )}
-      <CastShadow id={id} src={img} box={her} shadow={scene.shadow} t={t} opacity={scene.shadow.opacity} />
+      <CastShadow id={id} src={img} box={her} shadow={scene.shadow} t={t} opacity={scene.shadow.opacity} clip={clip} />
       {/* breathing steps with the drawings instead of gliding between them */}
-      <Img
+      <Figure
         src={img}
+        clip={clip}
         style={{
           position: "absolute",
           width: her.w,
@@ -199,6 +240,7 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
   const h = height * shot.h;
   const w = h * shot.aspect;
   const [cx, bottom] = [width * shot.x, height * shot.bottom];
+  const clip = shot.redraw && t < shot.redraw[1] ? strokesClip("redraw", shot.redraw, t, w, h, 9, shot.id) : undefined;
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
@@ -206,8 +248,9 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
       <FigureFilter id={`tint-${shot.id}`} t={t} tint={pose.tint} />
       {/* pushed in around the middle of the cut edge, which stays below the frame */}
       <AbsoluteFill style={{ transformOrigin: `${cx}px ${bottom}px`, scale: String(closeUpPush(shot, t)) }}>
-        <Img
+        <Figure
           src={staticFile(`characters/${shot.id}.png`)}
+          clip={clip}
           style={{
             position: "absolute",
             width: w,

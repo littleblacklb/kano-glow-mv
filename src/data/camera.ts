@@ -62,6 +62,7 @@ export type CloseUp = {
   h: number; // drawn height, fraction of the frame height
   bottom: number; // where the png's cut edge sits, fraction of the frame height (below the frame)
   push: number; // slow push-in across the shot, around the middle of its cut edge
+  redraw?: [number, number]; // drawn back stroke by stroke over this range
 };
 
 export const CLOSE_UPS: CloseUp[] = [
@@ -75,6 +76,8 @@ export const CLOSE_UPS: CloseUp[] = [
     h: 0.92,
     bottom: 1.03,
     push: 1.05,
+    // erased in the wide shot just before; こんなにきつく抱きしめてる draws her back
+    redraw: [150.13, 154],
   },
   // 赤く染まる指先に / 零れ落ちそうな赤: her hand fades in out of the emptied night
   {

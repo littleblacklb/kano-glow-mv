@@ -20,6 +20,8 @@ export type CharacterScene = {
   // 君, drawn only as a cast shadow beside her: figure png, its root's offset from her rest point
   // (fraction of the frame width, negative = toward the light on the left) and its drawn height.
   companion?: { id: "kimi-sit" | "kimi-stand"; aspect: number; dx: number; h: number };
+  // Rubbed out stroke by stroke over [from, to], made whole again at `until` behind a close-up.
+  erase?: { from: number; to: number; until: number };
 };
 
 // Left edge of the widest lyric block (three vertical columns), fraction of the frame width.
@@ -72,6 +74,8 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     tint: 0.45,
     shadow: { skew: 65, length: 0.35, opacity: 0.3 },
     companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.09, h: 0.41 },
+    // 消えて 消してよ そう願っていたのに, until the cut to her face on どうして
+    erase: { from: 145.5, to: 149.6, until: 150.13 },
   },
   // 君の声が遠くなる: looking up at the stars
   {
