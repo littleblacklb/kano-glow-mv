@@ -3,7 +3,7 @@ import { useWindowedAudioData, visualizeAudio } from "@remotion/media-utils";
 import { useEffect, useState } from "react";
 import { AbsoluteFill, staticFile, useCurrentFrame, useDelayRender, useVideoConfig } from "remotion";
 import { FadeToBlack, Grain, Sky, Vignette } from "./components/Backdrop";
-import { Character } from "./components/Character";
+import { Character, SceneCharacters } from "./components/Character";
 import { Lyrics } from "./components/Lyrics";
 import { ScarLines } from "./components/ScarLines";
 import { Clouds, Horizon, LightLeak, Sun, TornClouds } from "./components/Scenery";
@@ -64,6 +64,7 @@ export const GlowMV: React.FC = () => {
       <InkBleed t={t} />
       <ScarLines t={t} />
       <RedDrops t={t} />
+      <SceneCharacters t={t} amp={amp} />
       <TornClouds t={t} />
       <LightLeak t={t} />
       <Character t={t} amp={amp} />

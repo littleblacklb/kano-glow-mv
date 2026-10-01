@@ -1,0 +1,9 @@
+Use case: style-transfer (new pose of an existing character), illustration asset for a music video.
+Reference image (attached cover.jpeg): CHARACTER AND STYLE REFERENCE ONLY. Ignore its red background and the "one 鹿乃" lettering.
+
+Character (must match the reference exactly): small girl with a short cream/pale-blonde bob with blunt bangs, two small deer-antler-like nubs on top of her head, a tiny round white chick sitting on top of her head, big round dark scribbled eyes, a red scarf wrapped high covering her mouth, an oversized long-sleeved cream hoodie with sleeves covering her hands, a short cream skirt, black-and-white vertically striped tights, red sneakers with cream laces. Acoustic guitar with a cream body and black hatched sound hole, as in the reference.
+
+Art style (must match the reference exactly): thin, slightly wobbly black pen line art, flat cream (#FFF8DC-like) fill, red only on the scarf and sneakers, black hatching only on the tights and guitar sound hole. No shading, no gradients, no shadows, no glow, no texture, no outline glow.
+
+Composition: the full figure is visible, centered, with generous empty margin on all four sides. Portrait 1024x1536.
+Background: a single perfectly flat pure green #00FF00 background filling the whole canvas. No ground, no floor line, no cast shadow, no scenery, no text, no signature.

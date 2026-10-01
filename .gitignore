@@ -8,3 +8,6 @@ out
 
 # remotion bundle output
 build
+
+# gpt-image-2 variants not picked, and Codex run logs (art/gen.sh)
+art/raw

@@ -35,10 +35,13 @@ export const Sun: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
   );
 };
 
+// Height of the rolling ground line at x, before the per-drawing jitter.
+export const groundY = (x: number, height: number) => height * HORIZON_Y + noise2D("hills", x * 0.0016, 0) * 34;
+
 const groundPoints = (width: number, height: number): [number, number][] =>
   Array.from({ length: 52 }, (_, i) => {
     const x = -20 + (i / 51) * (width + 40);
-    return [x, height * HORIZON_Y + noise2D("hills", x * 0.0016, 0) * 34];
+    return [x, groundY(x, height)];
   });
 
 // Ground line with two utility poles: the corner of an evening sky (夕暮れ空のすみっこ).
