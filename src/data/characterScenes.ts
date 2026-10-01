@@ -1,3 +1,5 @@
+import { interpolate } from "remotion";
+
 // The character poses between the intro and outro, generated with gpt-image-2 (art/gen.sh)
 // and cut out by scripts/key-characters.py into public/characters/<id>.png.
 // Cast shadow: her own silhouette flipped onto the ground at the rest point, squashed to
@@ -118,3 +120,15 @@ export const placeScene = (scene: CharacterScene, width: number, height: number,
 // [a, b, c, d] of the CSS matrix that flips her down onto the ground (scaleY(-length)), then leans it (skewX).
 export const shadowMatrix = ({ skew, length }: Shadow) =>
   [1, 0, -length * Math.tan((skew * Math.PI) / 180), -length] as const;
+
+const at = (t: number, ts: number[], vs: number[]) =>
+  interpolate(t, ts, vs, { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+
+// 君 only exists as a shadow, so only where there is light: beside her under the setting sun,
+// fading scene by scene, gone with the sun, back blurred (滲む) in the light through the clouds,
+// then gathering into her own shadow (ぎゅっとしがみついた) and fading with it.
+export const kimiAt = (t: number) => ({
+  presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.5, 0.5, 0]),
+  blur: at(t, [232, 238, 248], [2, 2, 6]), // px, on top of the shadow's own softening
+  gather: at(t, [238, 248], [0, 1]), // 0 = beside her, 1 = on her rest point
+});

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { envelope } from "./timeline";
-import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, placeScene, shadowMatrix } from "./characterScenes";
+import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, kimiAt, placeScene, shadowMatrix } from "./characterScenes";
 
 const ASPECT_16_9 = 1080 / 1920;
 
@@ -73,5 +73,28 @@ describe("CHARACTER_SCENES", () => {
     for (const t of [40, 80, 120, 150, 190, 215, 245]) {
       expect(Math.max(...CHARACTER_SCENES.map((s) => envelope(t, s.window))), `t=${t}`).toBe(1);
     }
+  });
+});
+
+describe("kimiAt", () => {
+  test("there is no 君 at night: no light, no shadow", () => {
+    for (let t = 166; t <= 232; t += 0.5) expect(kimiAt(t).presence, `t=${t}`).toBe(0);
+  });
+
+  test("君 fades scene by scene while the sun is up", () => {
+    expect(kimiAt(90).presence).toBe(1);
+    expect(kimiAt(120).presence).toBeLessThan(1);
+    expect(kimiAt(150).presence).toBeLessThan(kimiAt(120).presence);
+  });
+
+  test("君 returns blurred in the light through the clouds and gathers into her shadow", () => {
+    expect(kimiAt(235).blur).toBeGreaterThan(0);
+    let last = -1;
+    for (let t = 236; t <= 250; t += 0.5) {
+      expect(kimiAt(t).gather, `t=${t}`).toBeGreaterThanOrEqual(last);
+      last = kimiAt(t).gather;
+    }
+    expect(kimiAt(248).gather).toBe(1);
+    expect(kimiAt(252).presence).toBe(0);
   });
 });
