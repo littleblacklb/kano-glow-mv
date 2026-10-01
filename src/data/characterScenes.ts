@@ -71,7 +71,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     h: 0.36,
     tint: 0.45,
     shadow: { skew: 65, length: 0.35, opacity: 0.3 },
-    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.05, h: 0.41 },
+    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.09, h: 0.41 },
   },
   // 君の声が遠くなる: looking up at the stars
   {
@@ -102,7 +102,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
     h: 0.36,
     tint: 0.35,
     shadow: { skew: 25, length: 0.2, opacity: 0.3 },
-    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.05, h: 0.41 },
+    companion: { id: "kimi-stand", aspect: 332 / 1302, dx: -0.08, h: 0.41 },
   },
 ];
 
@@ -136,7 +136,7 @@ const at = (t: number, ts: number[], vs: number[]) =>
 // then gathering into her own shadow (ぎゅっとしがみついた) and fading with it.
 // Only read inside the scenes that have a companion (sunset, play, hug, cling), times their own fade.
 export const kimiAt = (t: number) => ({
-  presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.5, 0.5, 0]),
+  presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.9, 0.9, 0]),
   // px on top of the shadow's own softening: as crisp as hers under the sun, ramping up while 君 is
   // absent at night so 君 returns already softened
   blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]),

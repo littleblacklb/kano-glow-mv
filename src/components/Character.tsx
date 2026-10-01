@@ -2,6 +2,8 @@ import { AbsoluteFill, Img, staticFile, useVideoConfig } from "remotion";
 import {
   CHARACTER_SCENES,
   FEET_SINK,
+  kimiAt,
+  placeCompanion,
   placeScene,
   shadowMatrix,
   type CharacterScene,
@@ -126,6 +128,9 @@ const SceneCharacter: React.FC<{
   const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, scene.tint));
   const id = scene.id;
   const img = staticFile(`characters/${id}.png`);
+  const k = kimiAt(t);
+  const kimi =
+    scene.companion && k.presence > 0 ? placeCompanion(scene, t, width, height, (x) => groundY(x, height)) : null;
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
@@ -135,6 +140,18 @@ const SceneCharacter: React.FC<{
           <feColorMatrix type="matrix" values={`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`} />
         </filter>
       </svg>
+      {/* 君: a shadow beside hers with no one casting it */}
+      {kimi && (
+        <CastShadow
+          id={`${id}-kimi`}
+          src={staticFile(`characters/${kimi.id}.png`)}
+          box={kimi}
+          shadow={scene.shadow}
+          t={t}
+          opacity={scene.shadow.opacity * k.presence}
+          blur={k.blur}
+        />
+      )}
       <CastShadow id={id} src={img} box={her} shadow={scene.shadow} t={t} opacity={scene.shadow.opacity} />
       {/* breathing steps with the drawings instead of gliding between them */}
       <Img
