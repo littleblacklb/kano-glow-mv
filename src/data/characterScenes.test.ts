@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { envelope } from "./timeline";
-import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, placeScene } from "./characterScenes";
+import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, placeScene, shadowMatrix } from "./characterScenes";
 
 const ASPECT_16_9 = 1080 / 1920;
 
@@ -23,7 +23,31 @@ describe("placeScene", () => {
   });
 });
 
+describe("shadowMatrix", () => {
+  // [a, b, c, d] of a CSS matrix around the rest point: x' = a·x + c·y, y' = b·x + d·y
+  const apply = ([a, b, c, d]: readonly number[], [x, y]: [number, number]) => [a * x + c * y, b * x + d * y];
+
+  test("her head's shadow falls onto the ground in front of her, away from the light", () => {
+    const [x, y] = apply(shadowMatrix({ skew: 45, length: 0.4, opacity: 0.3 }), [0, -100]);
+    expect(y).toBeCloseTo(40); // below the rest point, squashed to 40%
+    expect(x).toBeCloseTo(40); // leaning right, away from a light on the left
+  });
+
+  test("the point she rests on stays where it is", () => {
+    expect(apply(shadowMatrix({ skew: 30, length: 0.3, opacity: 0.3 }), [0, 0])).toEqual([0, 0]);
+  });
+});
+
 describe("CHARACTER_SCENES", () => {
+  test("shadows lie on the ground: flattened, and never more than faint", () => {
+    for (const { id, shadow } of CHARACTER_SCENES) {
+      expect(shadow.length, id).toBeGreaterThan(0);
+      expect(shadow.length, id).toBeLessThanOrEqual(0.6);
+      expect(Math.abs(shadow.skew), id).toBeLessThan(75);
+      expect(shadow.opacity, id).toBeLessThanOrEqual(0.45);
+    }
+  });
+
   test("every window is strictly increasing", () => {
     for (const { id, window } of CHARACTER_SCENES) {
       for (let i = 1; i < 4; i++) expect(window[i], id).toBeGreaterThan(window[i - 1]);

@@ -64,7 +64,7 @@ export const GlowMV: React.FC = () => {
       <InkBleed t={t} />
       <ScarLines t={t} />
       <RedDrops t={t} />
-      <SceneCharacters t={t} amp={amp} />
+      <SceneCharacters t={t} />
       <TornClouds t={t} />
       <LightLeak t={t} />
       <Character t={t} amp={amp} />
