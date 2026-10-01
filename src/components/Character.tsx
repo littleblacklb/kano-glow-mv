@@ -9,8 +9,10 @@ import {
   type CharacterScene,
   type Shadow,
 } from "../data/characterScenes";
+import { CLOSE_UPS, closeUpCover, closeUpPush, type CloseUp } from "../data/camera";
 import { envelope, skyAt, W } from "../data/timeline";
 import { boilFrame, mix, onThrees } from "../lib/draw";
+import { Sky } from "./Backdrop";
 import { groundPoints, groundY } from "./Scenery";
 
 // kano.png is cut from the jacket by scripts/cutout.py (625×1295).
@@ -64,6 +66,20 @@ const boil = (t: number) => (
     <feDisplacementMap in="SourceGraphic" scale={BOIL_PX} />
   </>
 );
+
+// Her figure's filter: the line boil, then the sky color multiplied in (`tint` of the way), so the cream
+// figure sits in rain, dusk and night alike.
+const FigureFilter: React.FC<{ id: string; t: number; tint: number }> = ({ id, t, tint }) => {
+  const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, tint));
+  return (
+    <svg width={0} height={0} style={{ position: "absolute" }}>
+      <filter id={id} colorInterpolationFilters="sRGB">
+        {boil(t)}
+        <feColorMatrix type="matrix" values={`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`} />
+      </filter>
+    </svg>
+  );
+};
 
 type Box = { left: number; top: number; w: number; h: number; origin: string };
 
@@ -124,8 +140,6 @@ const SceneCharacter: React.FC<{
 }> = ({ scene, t, vis }) => {
   const { width, height } = useVideoConfig();
   const her = placeScene(scene, width, height, (x) => groundY(x, height));
-  // Multiplying by the sky color, so the cream figure sits in rain, dusk and night alike.
-  const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, scene.tint));
   const id = scene.id;
   const img = staticFile(`characters/${id}.png`);
   const k = kimiAt(t);
@@ -134,12 +148,7 @@ const SceneCharacter: React.FC<{
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
-      <svg width={0} height={0} style={{ position: "absolute" }}>
-        <filter id={`tint-${id}`} colorInterpolationFilters="sRGB">
-          {boil(t)}
-          <feColorMatrix type="matrix" values={`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`} />
-        </filter>
-      </svg>
+      <FigureFilter id={`tint-${id}`} t={t} tint={scene.tint} />
       {/* 君: a shadow beside hers with no one casting it */}
       {kimi && (
         <CastShadow
@@ -170,12 +179,56 @@ const SceneCharacter: React.FC<{
   );
 };
 
-// Small figures on the horizon through the middle of the song, one pose per section.
-export const SceneCharacters: React.FC<{ t: number }> = ({ t }) => (
+// Small figures on the horizon through the middle of the song, one pose per section,
+// gone while a close-up covers the wide shot.
+export const SceneCharacters: React.FC<{ t: number }> = ({ t }) => {
+  const shown = 1 - closeUpCover(t);
+  return (
+    <>
+      {CHARACTER_SCENES.map((scene) => {
+        const vis = envelope(t, scene.window) * shown;
+        return vis === 0 ? null : <SceneCharacter key={scene.id} scene={scene} t={t} vis={vis} />;
+      })}
+    </>
+  );
+};
+
+const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot, t, vis }) => {
+  const { width, height } = useVideoConfig();
+  const pose = CHARACTER_SCENES.find((s) => s.id === shot.pose)!;
+  const h = height * shot.h;
+  const w = h * shot.aspect;
+  const [cx, bottom] = [width * shot.x, height * shot.bottom];
+
+  return (
+    <AbsoluteFill style={{ opacity: vis }}>
+      <Sky t={t} />
+      <FigureFilter id={`tint-${shot.id}`} t={t} tint={pose.tint} />
+      {/* pushed in around the middle of the cut edge, which stays below the frame */}
+      <AbsoluteFill style={{ transformOrigin: `${cx}px ${bottom}px`, scale: String(closeUpPush(shot, t)) }}>
+        <Img
+          src={staticFile(`characters/${shot.id}.png`)}
+          style={{
+            position: "absolute",
+            width: w,
+            height: h,
+            left: cx - w / 2,
+            top: bottom - h,
+            filter: `url(#tint-${shot.id})`,
+            ...breathe(onThrees(t), 0),
+          }}
+        />
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+// Inserted shots over the wide shot's sky and ground; the scratches (傷跡) and lyrics stay on top.
+export const CloseUps: React.FC<{ t: number }> = ({ t }) => (
   <>
-    {CHARACTER_SCENES.map((scene) => {
-      const vis = envelope(t, scene.window);
-      return vis === 0 ? null : <SceneCharacter key={scene.id} scene={scene} t={t} vis={vis} />;
+    {CLOSE_UPS.map((shot) => {
+      const vis = envelope(t, shot.window);
+      return vis === 0 ? null : <CloseUpShot key={shot.id} shot={shot} t={t} vis={vis} />;
     })}
   </>
 );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AbsoluteFill, staticFile, useCurrentFrame, useDelayRender, useVideoConfig } from "remotion";
 import { FadeToBlack, Grain, Sky, Vignette } from "./components/Backdrop";
 import { Camera } from "./components/Camera";
-import { Character, SceneCharacters } from "./components/Character";
+import { Character, CloseUps, SceneCharacters } from "./components/Character";
 import { Lyrics } from "./components/Lyrics";
 import { ScarLines } from "./components/ScarLines";
 import { Clouds, Horizon, LightLeak, Sun, TornClouds } from "./components/Scenery";
@@ -69,10 +69,14 @@ export const GlowMV: React.FC = () => {
         <Sun t={t} amp={amp} />
         <Clouds t={t} />
         <Horizon t={t} />
+        {/* under the close-ups: its stains read as blots on her sleeve; the drawn drop carries 零れ落ちそうな赤 */}
+        <RedDrops t={t} />
+      </Camera>
+      <CloseUps t={t} />
+      <Camera t={t}>
         <Rain t={t} />
         <InkBleed t={t} />
         <ScarLines t={t} />
-        <RedDrops t={t} />
         <SceneCharacters t={t} />
         <TornClouds t={t} />
         <LightLeak t={t} />
