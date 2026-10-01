@@ -5,6 +5,12 @@ character has no green in her, so every pixel is keyed by how green it is:
 no flood fill, which also clears gaps the line art encloses (arm against torso).
 Edge pixels are a mix of line/fill and green; they are unmixed back to the
 foreground color so no green fringe shows over the sky.
+
+The poses are drawn at about a third of their size, which thins gpt-image-2's
+pen to ~0.6px on screen against the jacket's ~2.9px; their ink is widened by
+INK_GROW source pixels per side (outline included), which matches the jacket's
+pen relative to her height without clogging the tights' stripes. The close-ups
+are drawn near full size and 君 is only ever a shadow, so both are left as is.
 """
 from pathlib import Path
 
@@ -19,6 +25,8 @@ SOLID = 20  # greenness at or below this is fully opaque (cream/red/ink are ≤ 
 CLEAR_MARGIN = 15  # within this of the background's greenness is fully transparent
 SPECK = 16  # connected blobs smaller than this many pixels are noise
 PAD = 8
+INK_GROW = 1  # px of source per side; 1.5 already turns the tights solid black
+CREAM = np.array([255, 248, 220.0])  # backing for the erosion, the poses' own fill
 
 OUT.mkdir(exist_ok=True)
 for src in sorted(SRC.glob("*.png")):
@@ -39,9 +47,18 @@ for src in sorted(SRC.glob("*.png")):
     sizes = ndimage.sum(np.ones_like(alpha), labels, range(1, n + 1))
     alpha[np.isin(labels, np.where(sizes < SPECK)[0] + 1)] = 0
 
+    # cropped before widening, so the sizes (and the aspects in characterScenes.ts) don't move
     ys, xs = np.where(alpha > 0.02)
     x0, x1 = max(xs.min() - PAD, 0), min(xs.max() + PAD, im.shape[1])
     y0, y1 = max(ys.min() - PAD, 0), min(ys.max() + PAD, im.shape[0])
+
+    if not src.stem.startswith(("close-", "kimi-")):
+        # widen dark lines: erode over a cream backing, grow the alpha by the same disk
+        yy, xx = np.mgrid[-INK_GROW : INK_GROW + 1, -INK_GROW : INK_GROW + 1]
+        disk = xx**2 + yy**2 <= INK_GROW**2
+        flat = fg * alpha[..., None] + CREAM * (1 - alpha[..., None])
+        fg = np.stack([ndimage.grey_erosion(flat[..., c], footprint=disk) for c in range(3)], -1)
+        alpha = ndimage.grey_dilation(alpha, footprint=disk)
     rgba = np.dstack([fg, alpha * 255]).round().astype(np.uint8)[y0:y1, x0:x1]
     out = OUT / src.name
     Image.fromarray(rgba, "RGBA").save(out, optimize=True)
