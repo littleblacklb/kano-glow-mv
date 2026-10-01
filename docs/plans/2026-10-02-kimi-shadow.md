@@ -67,6 +67,15 @@ test("君 fades scene by scene while the sun is up", () => {
   expect(kimiAt(120).presence).toBeLessThan(1);
   expect(kimiAt(150).presence).toBeLessThan(kimiAt(120).presence);
 });
+test("beside her under the sun, 君's shadow is as crisp as hers", () => {
+  for (const t of [80, 120, 150]) expect(kimiAt(t).blur, `t=${t}`).toBe(0);
+});
+test("君 leaves with the sun", () => {
+  expect(kimiAt(157).presence).toBeCloseTo(0.6);
+  expect(kimiAt(166).presence).toBe(0);
+  expect(kimiAt(162).presence).toBeGreaterThan(0);
+  expect(kimiAt(162).presence).toBeLessThan(0.6);
+});
 test("君 returns blurred in the light through the clouds and gathers into her shadow", () => {
   expect(kimiAt(235).blur).toBeGreaterThan(0);
   let last = -1;
@@ -90,9 +99,12 @@ const at = (t: number, ts: number[], vs: number[]) =>
 // 君 only exists as a shadow, so only where there is light: beside her under the setting sun,
 // fading scene by scene, gone with the sun, back blurred (滲む) in the light through the clouds,
 // then gathering into her own shadow (ぎゅっとしがみついた) and fading with it.
+// Only read inside the scenes that have a companion (sunset, play, hug, cling), times their own fade.
 export const kimiAt = (t: number) => ({
-  presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.5, 0.5, 0]),
-  blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]), // px, crisp under the sun, softened by the return
+  presence: at(t, [106, 110, 131, 135, 158, 166, 232, 236, 248, 252], [1, 0.85, 0.85, 0.6, 0.6, 0, 0, 0.9, 0.9, 0]),
+  // px on top of the shadow's own softening: as crisp as hers under the sun, ramping up while 君 is
+  // absent at night so 君 returns already softened
+  blur: at(t, [166, 232, 238, 248], [0, 2, 2, 6]),
   gather: at(t, [238, 248], [0, 1]), // 0 = beside her, 1 = on her rest point
 });
 ```
