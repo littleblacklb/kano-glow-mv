@@ -1,0 +1,9 @@
+Use case: style-transfer (new character drawn in the style of an existing illustration), illustration asset for a music video.
+Reference image (attached cover.jpeg): DRAWING STYLE REFERENCE ONLY, not a character reference. Do not draw the girl from the reference. Ignore its red background and the "one 鹿乃" lettering.
+
+Character: a slender person slightly taller than a young teen, gender-neutral, short tousled hair, a long plain coat and trousers, simple shoes. NOT the girl in the reference: no horns, no chick, no scarf, no guitar. The reference is for drawing style only. Clear, readable silhouette: limbs separated from the body where the pose allows.
+
+Art style (must match the reference exactly): thin, slightly wobbly black pen line art, flat cream (#FFF8DC-like) fill for the clothes, plain flat cream or pale fill for the hair, no red anywhere, no hatching. No shading, no gradients, no shadows, no glow, no texture, no outline glow.
+
+Composition: the full figure is visible, centered, with generous empty margin on all four sides. Portrait 1024x1536.
+Background: a single perfectly flat pure green #00FF00 background filling the whole canvas. No ground, no floor line, no cast shadow, no scenery, no text, no signature.
