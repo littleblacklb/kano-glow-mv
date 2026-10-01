@@ -1,8 +1,27 @@
 import { describe, expect, test } from "vitest";
 import { envelope } from "./timeline";
-import { CHARACTER_SCENES, LYRIC_COLUMN_LEFT } from "./characterScenes";
+import { CHARACTER_SCENES, FEET_SINK, LYRIC_COLUMN_LEFT, placeScene } from "./characterScenes";
 
 const ASPECT_16_9 = 1080 / 1920;
+
+describe("placeScene", () => {
+  // a slope steep enough that anchoring at the wrong x would show
+  const ground = (x: number) => 900 - x * 0.05;
+
+  test("the point she rests on lands on the ground under that point, not under her center", () => {
+    for (const scene of CHARACTER_SCENES) {
+      const { left, top, w, h } = placeScene(scene, 1920, 1080, ground);
+      const [rx, ry] = scene.rest ?? [0.5, 1];
+      expect(top + ry * h, scene.id).toBeCloseTo(ground(left + rx * w) + FEET_SINK);
+    }
+  });
+
+  test("she breathes and sways around the point she rests on", () => {
+    const sunset = CHARACTER_SCENES.find((s) => s.id === "sunset")!;
+    const [rx, ry] = sunset.rest!;
+    expect(placeScene(sunset, 1920, 1080, ground).origin).toBe(`${rx * 100}% ${ry * 100}%`);
+  });
+});
 
 describe("CHARACTER_SCENES", () => {
   test("every window is strictly increasing", () => {

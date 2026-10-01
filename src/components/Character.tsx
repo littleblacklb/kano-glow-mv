@@ -1,5 +1,5 @@
 import { AbsoluteFill, Img, staticFile, useVideoConfig } from "remotion";
-import { CHARACTER_SCENES, type CharacterScene } from "../data/characterScenes";
+import { CHARACTER_SCENES, placeScene, type CharacterScene } from "../data/characterScenes";
 import { envelope, skyAt, W } from "../data/timeline";
 import { mix } from "../lib/draw";
 import { groundY } from "./Scenery";
@@ -8,8 +8,8 @@ import { groundY } from "./Scenery";
 const ASPECT = 625 / 1295;
 
 // slow breathing plus a faint sway with the strum
-const breathe = (t: number, amp: number) => ({
-  transformOrigin: "50% 100%",
+const breathe = (t: number, amp: number, origin = "50% 100%") => ({
+  transformOrigin: origin,
   scale: `1 ${1 + Math.sin((t / 3.6) * Math.PI * 2) * 0.005 + amp * 0.004}`,
   rotate: `${Math.sin((t / 5.3) * Math.PI * 2) * 0.45}deg`,
 });
@@ -49,9 +49,7 @@ const SceneCharacter: React.FC<{ scene: CharacterScene; t: number; amp: number; 
   vis,
 }) => {
   const { width, height } = useVideoConfig();
-  const h = height * scene.h;
-  const w = h * scene.aspect;
-  const cx = width * scene.x;
+  const { left, top, w, h, origin } = placeScene(scene, width, height, (x) => groundY(x, height));
   // Multiplying by the sky color, so the cream figure sits in rain, dusk and night alike.
   const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, scene.tint));
   const filterId = `tint-${scene.id}`;
@@ -69,11 +67,10 @@ const SceneCharacter: React.FC<{ scene: CharacterScene; t: number; amp: number; 
           position: "absolute",
           width: w,
           height: h,
-          left: cx - w / 2,
-          // feet sink a little into the ground line
-          top: groundY(cx, height) - h + 6,
+          left,
+          top,
           filter: `url(#${filterId})`,
-          ...breathe(t, amp),
+          ...breathe(t, amp, origin),
         }}
       />
     </AbsoluteFill>
