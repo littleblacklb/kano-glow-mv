@@ -1,5 +1,12 @@
 import { AbsoluteFill, Img, staticFile, useVideoConfig } from "remotion";
-import { CHARACTER_SCENES, FEET_SINK, placeScene, shadowMatrix, type CharacterScene } from "../data/characterScenes";
+import {
+  CHARACTER_SCENES,
+  FEET_SINK,
+  placeScene,
+  shadowMatrix,
+  type CharacterScene,
+  type Shadow,
+} from "../data/characterScenes";
 import { envelope, skyAt, W } from "../data/timeline";
 import { boilFrame, mix, onThrees } from "../lib/draw";
 import { groundPoints, groundY } from "./Scenery";
@@ -49,67 +56,97 @@ const channels = (color: string) =>
 // Pixels her lines wander each drawing, like the boiling scenery around her.
 const BOIL_PX = 3;
 
+const boil = (t: number) => (
+  <>
+    <feTurbulence type="fractalNoise" baseFrequency={0.04} numOctaves={1} seed={boilFrame(t)} />
+    <feDisplacementMap in="SourceGraphic" scale={BOIL_PX} />
+  </>
+);
+
+type Box = { left: number; top: number; w: number; h: number; origin: string };
+
+// A figure's silhouette laid on the ground from its rest point, clipped so it never rises into the sky.
+const CastShadow: React.FC<{
+  id: string; // unique per shadow, names its filter
+  src: string;
+  box: Box;
+  shadow: Shadow;
+  t: number;
+  opacity: number;
+  blur?: number; // extra softening, px
+}> = ({ id, src, box, shadow, t, opacity, blur = 0 }) => {
+  const { width, height } = useVideoConfig();
+  const [a, b, c, d] = shadowMatrix(shadow);
+  const ground = groundPoints(width, height);
+  const groundArea = `M${ground.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join("L")}L${width + 20},${height + 20}L-20,${height + 20}Z`;
+
+  return (
+    <>
+      <svg width={0} height={0} style={{ position: "absolute" }}>
+        <filter id={`shadow-${id}`} colorInterpolationFilters="sRGB">
+          {boil(t)}
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+        </filter>
+      </svg>
+      <AbsoluteFill
+        style={{
+          clipPath: `path("${groundArea}")`,
+          // softens the edge after the squash (filters run before clip-path, so the ground edge stays crisp)
+          filter: `blur(${1 + blur}px)`,
+          opacity,
+        }}
+      >
+        <Img
+          src={src}
+          style={{
+            position: "absolute",
+            width: box.w,
+            height: box.h,
+            left: box.left,
+            top: box.top,
+            filter: `url(#shadow-${id})`,
+            transformOrigin: box.origin,
+            // the image is sunk FEET_SINK into the ground; the shadow starts at the line itself
+            transform: `matrix(${a}, ${b}, ${c}, ${d}, 0, ${-FEET_SINK})`,
+          }}
+        />
+      </AbsoluteFill>
+    </>
+  );
+};
+
 const SceneCharacter: React.FC<{
   scene: CharacterScene;
   t: number;
   vis: number;
 }> = ({ scene, t, vis }) => {
   const { width, height } = useVideoConfig();
-  const { left, top, w, h, origin } = placeScene(scene, width, height, (x) => groundY(x, height));
+  const her = placeScene(scene, width, height, (x) => groundY(x, height));
   // Multiplying by the sky color, so the cream figure sits in rain, dusk and night alike.
   const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, scene.tint));
-  const [a, sb, sc, d] = shadowMatrix(scene.shadow);
-  const ground = groundPoints(width, height);
-  const groundArea = `M${ground.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join("L")}L${width + 20},${height + 20}L-20,${height + 20}Z`;
   const id = scene.id;
-  const boil = (
-    <>
-      <feTurbulence type="fractalNoise" baseFrequency={0.04} numOctaves={1} seed={boilFrame(t)} />
-      <feDisplacementMap in="SourceGraphic" scale={BOIL_PX} />
-    </>
-  );
   const img = staticFile(`characters/${id}.png`);
-  const box = { position: "absolute", width: w, height: h, left, top } as const;
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
       <svg width={0} height={0} style={{ position: "absolute" }}>
         <filter id={`tint-${id}`} colorInterpolationFilters="sRGB">
-          {boil}
+          {boil(t)}
           <feColorMatrix type="matrix" values={`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`} />
         </filter>
-        <filter id={`shadow-${id}`} colorInterpolationFilters="sRGB">
-          {boil}
-          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
-        </filter>
       </svg>
-      {/* her silhouette laid on the ground, clipped so it never rises into the sky */}
-      <AbsoluteFill
-        style={{
-          clipPath: `path("${groundArea}")`,
-          // softens the edge after the squash (filters run before clip-path, so the ground edge stays crisp)
-          filter: "blur(1px)",
-          opacity: scene.shadow.opacity,
-        }}
-      >
-        <Img
-          src={img}
-          style={{
-            ...box,
-            filter: `url(#shadow-${id})`,
-            transformOrigin: origin,
-            // the image is sunk FEET_SINK into the ground; the shadow starts at the line itself
-            transform: `matrix(${a}, ${sb}, ${sc}, ${d}, 0, ${-FEET_SINK})`,
-          }}
-        />
-      </AbsoluteFill>
+      <CastShadow id={id} src={img} box={her} shadow={scene.shadow} t={t} opacity={scene.shadow.opacity} />
       {/* breathing steps with the drawings instead of gliding between them */}
       <Img
         src={img}
         style={{
-          ...box,
+          position: "absolute",
+          width: her.w,
+          height: her.h,
+          left: her.left,
+          top: her.top,
           filter: `url(#tint-${id})`,
-          ...breathe(onThrees(t), 0, origin),
+          ...breathe(onThrees(t), 0, her.origin),
         }}
       />
     </AbsoluteFill>
