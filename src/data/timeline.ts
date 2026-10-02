@@ -7,7 +7,7 @@ export const INK = "#1A1414";
 
 type SkyKey = { t: number; top: string; bottom: string };
 
-// The color journey: cover red → cold rain → sunset → deep red → night → faint cloud light → night.
+// The color journey: cover red → cold rain → sunset → deep red → night → warmth held in shadow.
 const SKY: SkyKey[] = [
   { t: 0, top: COVER_RED, bottom: COVER_RED },
   { t: 22, top: COVER_RED, bottom: COVER_RED },
@@ -25,10 +25,9 @@ const SKY: SkyKey[] = [
   { t: 206, top: "#14172F", bottom: "#50354B" }, // hand reaches before dusk disappears
   { t: 214.2, top: "#141930", bottom: "#2B2B4B" }, // full night only after the light escapes
   { t: 226, top: "#1A1F3C", bottom: "#4A2846" },
-  { t: 242, top: "#23283F", bottom: "#654A57" }, // a little light through clouds, not a new dawn
-  { t: 256, top: "#191E31", bottom: "#3C3045" },
-  { t: 275, top: "#101522", bottom: "#262332" },
-  { t: 284, top: "#101522", bottom: "#262332" },
+  { t: 242, top: "#35364D", bottom: "#8A636C" }, // clouds open: warmth returns, not a new dawn
+  { t: 256, top: "#414158", bottom: "#AC8580" }, // hold the glow and the shadows through the tail
+  { t: 284, top: "#414158", bottom: "#AC8580" },
 ];
 
 const TS = SKY.map((k) => k.t);
@@ -58,7 +57,7 @@ export const W = {
   stars: [174, 184, 228, 240],
   afterglow: [172, 181, 204, 214.2],
   tornClouds: [222, 228, 252, 258],
-  lightLeak: [228, 240, 248, 282],
+  lightLeak: [228, 240, 283, 284], // warmth holds; only the global closing fade ends the image
   fadeToBlack: [-1, 1.2, 275, 282], // interpolate needs strictly increasing input
 } satisfies Record<string, [number, number, number, number]>;
 

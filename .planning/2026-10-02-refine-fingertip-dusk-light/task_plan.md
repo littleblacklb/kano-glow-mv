@@ -39,8 +39,15 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Regenerate the local font subsets for the new glyphs.
 - Verify subtitle coverage, run relevant checks, render a subtitle sample and save a task-only checkpoint.
 
+### Phase 8: Keep warmth in the unresolved ending
+**Status:** complete
+- Preserve the final held pose, camera, selected translation, audio and timing; do not restore the cover or credits.
+- Let cloud-gap light spread modestly and retain warm sky with shadows through the tail, instead of cooling and extinguishing it.
+- Keep only the existing global closing fade; exclude whiteout, rays, particles and a literal new dawn.
+- Run regression checks and render final lyric/tail/fade before a task-only commit.
+
 ## Next Step
-User review of the adopted translation (sample: out/subtitle-selected-62.png) and ending preview. 21 exact translations, font subset input coverage, 70 tests and scoped checks passed. Root.tsx frame-rate/import issue remains separate and untouched; no full export performed.
+User review of out/ending-warm-226-283.mp4 and out/ending-warm-268.png. 71 tests, scoped ESLint/TypeScript and sampled 30fps renders passed. Root.tsx's pre-existing frame-rate/import issue stays untouched; no full MV export, uninterrupted playback or 60fps runtime validation performed.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.

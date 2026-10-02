@@ -1,6 +1,7 @@
 import { noise2D } from "@remotion/noise";
 import { AbsoluteFill, Easing, interpolate, useVideoConfig } from "remotion";
 import { CREAM, envelope, INK, skyAt, W } from "../data/timeline";
+import { endingLightAt } from "../data/ending";
 import { boilFrame, mix, onThrees, wobblyCircle, wobblyLine } from "../lib/draw";
 
 const HORIZON_Y = 0.84;
@@ -166,7 +167,7 @@ export const TornClouds: React.FC<{ t: number }> = ({ t }) => {
     extrapolateRight: "clamp",
     easing: Easing.inOut(Easing.sin),
   });
-  const lit = interpolate(t, [222, 250], [0.12, 0.22], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const lit = interpolate(t, [222, 250], [0.12, 0.32], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const fill = mix(skyAt(t).top, CREAM, lit);
   const y = height * 0.4;
 
@@ -185,15 +186,15 @@ export const TornClouds: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-// A small remnant at the horizon, never a growing burst or a promise of dawn.
+// A soft field from the cloud gap, spreading toward the horizon without erasing the shadows.
 export const DistantLight: React.FC<{ t: number }> = ({ t }) => {
-  const vis = envelope(t, W.lightLeak);
-  if (vis === 0) return null;
+  const light = endingLightAt(t);
+  if (light.opacity === 0) return null;
   return (
     <AbsoluteFill
       style={{
-        opacity: vis * 0.32,
-        background: "radial-gradient(ellipse 20% 6% at 34% 74%, rgba(220,145,124,0.65), rgba(153,95,114,0.24) 48%, transparent 100%)",
+        opacity: light.opacity,
+        background: `radial-gradient(ellipse ${light.rx}% ${light.ry}% at 40% ${light.y}%, rgba(244,200,167,0.65), rgba(208,149,144,0.28) 48%, transparent 100%)`,
         pointerEvents: "none",
       }}
     />

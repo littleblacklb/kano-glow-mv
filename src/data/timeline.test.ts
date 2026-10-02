@@ -14,9 +14,9 @@ describe("envelope", () => {
 });
 
 describe("skyAt", () => {
-  test("starts on cover red but ends in night instead of returning to the cover", () => {
+  test("starts on cover red but ends with warm afterglow and a shadowed upper sky", () => {
     expect(skyAt(0).top).toBe(COVER_RED_RGBA);
-    expect(skyAt(283)).toEqual({ top: "rgba(16, 21, 34, 1)", bottom: "rgba(38, 35, 50, 1)" });
+    expect(skyAt(283)).toEqual({ top: "rgba(65, 65, 88, 1)", bottom: "rgba(172, 133, 128, 1)" });
   });
 
   test("is dark indigo during the bridge (夜になるだけ)", () => {
