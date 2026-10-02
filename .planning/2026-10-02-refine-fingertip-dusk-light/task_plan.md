@@ -33,8 +33,14 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Replace expanding bright rays with faint distant light; soften the background and settle motion without resolving the loss.
 - Render final lyric/tail/fade, run regression checks and save a local checkpoint.
 
+### Phase 7: Adopt the user-supplied translation
+**Status:** complete
+- Replace all 21 Chinese subtitle entries with the user's supplied text, including spacing and 說; keep Japanese 赤く, timestamps and metadata unchanged.
+- Regenerate the local font subsets for the new glyphs.
+- Verify subtitle coverage, run relevant checks, render a subtitle sample and save a task-only checkpoint.
+
 ## Next Step
-Review out/ending-held-236-283.mp4. Resolve the pre-existing Root.tsx 60fps / 30fps-duration mismatch separately before default full export; full lint/tsc also flag its unused FPS import. This task leaves that file untouched/uncommitted. No full MV export or uninterrupted audio-visual playback performed.
+User review of the adopted translation (sample: out/subtitle-selected-62.png) and ending preview. 21 exact translations, font subset input coverage, 70 tests and scoped checks passed. Root.tsx frame-rate/import issue remains separate and untouched; no full export performed.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.
