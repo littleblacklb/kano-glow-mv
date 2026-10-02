@@ -46,10 +46,17 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Keep only the existing global closing fade; exclude whiteout, rays, particles and a literal new dawn.
 - Run regression checks and render final lyric/tail/fade before a task-only commit.
 
+### Phase 9: Make a Bilibili cover
+**Status:** complete
+- Compose a 1600×1200 (4:3) cover from existing MV art and local fonts: readable glow / 鹿乃 title, close framing of the clinging pose, paper-textured warm afterglow and cool shadows.
+- Export PNG and upload-ready JPEG, plus a thumbnail for visual checking.
+- Validate image dimensions and lettering; save a reproducible asset-generation script without modifying MV scenes, audio, subtitles or Root.tsx.
+
 ## Next Step
-User review of out/ending-warm-226-283.mp4 and out/ending-warm-268.png. 71 tests, scoped ESLint/TypeScript and sampled 30fps renders passed. Root.tsx's pre-existing frame-rate/import issue stays untouched; no full MV export, uninterrupted playback or 60fps runtime validation performed.
+User review/upload of out/glow-bilibili-cover-4x3.jpg (PNG also available). Full-size and 320×240 thumbnail inspected; dimensions, decode, glyph coverage and deterministic regeneration passed. No MV scene, audio, lyric or Root.tsx changes in this phase; Bilibili upload not performed.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.
+- Cover task initially looked for ui-ux-pro-max under ~/.pi/agent/skills; corrected to its declared ~/.agents/skills location.
 - npm run lint returned a wrapper-style report covering unrelated files (including CesiumFlythrough.tsx); invoking the project ESLint executable on src and TypeScript directly passed. No unrelated files repaired.
 - Initial asset color assertion flagged two dark antialiased pen pixels (R=65/75), not bright pigment. Refined the check to exclude dark ink (R<=100); canvas, alpha region, bright-pigment removal and deterministic regeneration all passed.
