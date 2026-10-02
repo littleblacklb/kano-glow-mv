@@ -21,8 +21,14 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Delay dense stars; make the sky-sourced coral band visible during the hand shot and fade into night.
 - Render comparison frames/transition; run regression checks. This trial does not add hand animation.
 
+### Phase 5: Naturalize residual dusk
+**Status:** complete
+- Preserve twilight timing, replace uniform horizon strip with irregular thin clouds.
+- Remove full-width close-up glow; attach localized warm light to the hand silhouette.
+- Render entry/hold/exit frames and preview, run regression checks, review and commit.
+
 ## Next Step
-User review of out/twilight-trial-174-220.mp4 and out/twilight-trial-206.png. If accepted, proceed separately with the discussed reaching/half-closing hand animation; that animation is not part of this isolated timing trial.
+User review of out/twilight-refined-196-218.mp4 and out/twilight-refined-206.png. Final 67 tests, ESLint src, TypeScript and diff checks passed. Hand gestures, lyrics, and full export remain outside this refinement.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.

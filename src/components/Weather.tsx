@@ -1,7 +1,6 @@
 import { AbsoluteFill, Easing, interpolate, random, useVideoConfig } from "remotion";
 import { CREAM, envelope, W } from "../data/timeline";
-import { afterglowAt, starRevealAt } from "../data/afterglow";
-import { closeUpCover } from "../data/camera";
+import { starRevealAt } from "../data/afterglow";
 import { boilFrame, clamp01, onThrees, wobblyCircle } from "../lib/draw";
 
 const RAIN_DROPS = 170;
@@ -132,29 +131,6 @@ export const Stars: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
           }
           return <circle key={i} cx={x} cy={y} r={1.2 + random(`sr${i}`) * 2.2} fill={CREAM} opacity={o} />;
         })}
-      </svg>
-    </AbsoluteFill>
-  );
-};
-
-// The last dusk light slips away: broad, translucent, with no drop or stain edges.
-export const Afterglow: React.FC<{ t: number }> = ({ t }) => {
-  const { width, height } = useVideoConfig();
-  const light = afterglowAt(t);
-  const opacity = light.opacity * closeUpCover(t);
-  if (opacity === 0) return null;
-
-  return (
-    <AbsoluteFill style={{ opacity, mixBlendMode: "screen", pointerEvents: "none" }}>
-      <svg width={width} height={height}>
-        <defs>
-          <radialGradient id="dusk-afterglow">
-            <stop offset="0" stopColor="#F07860" stopOpacity={0.95} />
-            <stop offset="0.45" stopColor="#D96F67" stopOpacity={0.55} />
-            <stop offset="1" stopColor="#D96F67" stopOpacity={0} />
-          </radialGradient>
-        </defs>
-        <ellipse cx={width * 0.36} cy={height * light.y} rx={width * 0.43} ry={height * 0.17} fill="url(#dusk-afterglow)" />
       </svg>
     </AbsoluteFill>
   );

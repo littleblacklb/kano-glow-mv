@@ -11,6 +11,7 @@ import {
 } from "../data/characterScenes";
 import { CLOSE_UPS, closeUpCover, closeUpPush, type CloseUp } from "../data/camera";
 import { envelope, skyAt, W } from "../data/timeline";
+import { afterglowAt } from "../data/afterglow";
 import { boilFrame, mix, onThrees, ramp } from "../lib/draw";
 import { erasePolygons, revealPolygons, toClipPath } from "../lib/strokes";
 import { Sky } from "./Backdrop";
@@ -70,8 +71,8 @@ const boil = (t: number) => (
 
 // Her figure's filter: the line boil, then the sky color multiplied in (`tint` of the way), so the cream
 // figure sits in rain, dusk and night alike.
-const FigureFilter: React.FC<{ id: string; t: number; tint: number }> = ({ id, t, tint }) => {
-  const [r, g, b] = channels(mix("#FFFFFF", skyAt(t).bottom, tint));
+const FigureFilter: React.FC<{ id: string; t: number; tint: number; duskReflection?: boolean }> = ({ id, t, tint, duskReflection = false }) => {
+  const [r, g, b] = duskReflection ? [1, 0.76, 0.78] : channels(mix("#FFFFFF", skyAt(t).bottom, tint));
   return (
     <svg width={0} height={0} style={{ position: "absolute" }}>
       <filter id={id} colorInterpolationFilters="sRGB">
@@ -241,6 +242,16 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
   const w = h * shot.aspect;
   const [cx, bottom] = [width * shot.x, height * shot.bottom];
   const clip = shot.redraw && t < shot.redraw[1] ? strokesClip("redraw", shot.redraw, t, w, h, 9, shot.id) : undefined;
+  const isHand = shot.id === "close-hand";
+  const light = afterglowAt(t);
+  const figureStyle: React.CSSProperties = {
+    position: "absolute",
+    width: w,
+    height: h,
+    left: cx - w / 2,
+    top: bottom - h,
+    ...breathe(onThrees(t), 0),
+  };
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
@@ -250,21 +261,27 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
         t={t}
         tint={pose.tint - (shot.id === "close-hand" ? envelope(t, W.afterglow) * 0.1 : 0)}
       />
+      {isHand && <FigureFilter id="hand-dusk-reflection" t={t} tint={0} duskReflection />}
       {/* pushed in around the middle of the cut edge, which stays below the frame */}
       <AbsoluteFill style={{ transformOrigin: `${cx}px ${bottom}px`, scale: String(closeUpPush(shot, t)) }}>
         <Figure
           src={staticFile(`characters/${shot.id}.png`)}
           clip={clip}
-          style={{
-            position: "absolute",
-            width: w,
-            height: h,
-            left: cx - w / 2,
-            top: bottom - h,
-            filter: `url(#tint-${shot.id})`,
-            ...breathe(onThrees(t), 0),
-          }}
+          style={{ ...figureStyle, filter: `url(#tint-${shot.id})` }}
         />
+        {isHand && light.handOpacity > 0 && (
+          <Figure
+            src={staticFile("characters/close-hand.png")}
+            style={{
+              ...figureStyle,
+              filter: "url(#hand-dusk-reflection)",
+              opacity: light.handOpacity,
+              // The PNG alpha keeps the light off gaps/background; the mask keeps it off the sleeve.
+              // Both copies share the exact same boil and breathing transforms, so edges cannot drift.
+              maskImage: "radial-gradient(ellipse 65% 42% at 70% 4%, black 8%, rgba(0,0,0,0.65) 43%, transparent 90%)",
+            }}
+          />
+        )}
       </AbsoluteFill>
     </AbsoluteFill>
   );

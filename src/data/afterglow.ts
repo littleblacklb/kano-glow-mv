@@ -5,13 +5,8 @@ import { envelope, W } from "./timeline";
 export const afterglowAt = (t: number) => {
   const strength = envelope(t, W.afterglow);
   return {
-    opacity: strength * 0.48,
+    handOpacity: strength * 0.88,
     skyOpacity: strength * 0.85,
-    y: interpolate(t, [204, 214.2], [0.26, 0.42], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.inOut(Easing.sin),
-    }),
   };
 };
 

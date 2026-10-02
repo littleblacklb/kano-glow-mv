@@ -9,7 +9,7 @@ import { Lyrics } from "./components/Lyrics";
 import { ScarLines } from "./components/ScarLines";
 import { Clouds, Horizon, LightLeak, Sun, TornClouds } from "./components/Scenery";
 import { Credits, TitleCard } from "./components/Titles";
-import { Afterglow, InkBleed, Rain, Stars } from "./components/Weather";
+import { InkBleed, Rain, Stars } from "./components/Weather";
 import { envelope, W } from "./data/timeline";
 import { parseLrc, type LyricLine } from "./lib/parseLrc";
 
@@ -71,8 +71,6 @@ export const GlowMV: React.FC = () => {
         <Horizon t={t} />
       </Camera>
       <CloseUps t={t} />
-      {/* Fingertip reflection of the same dusk band drawn by Sky, gone before full night. */}
-      <Afterglow t={t} />
       <Camera t={t}>
         <Rain t={t} />
         <InkBleed t={t} />
