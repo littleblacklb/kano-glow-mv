@@ -27,8 +27,14 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Remove full-width close-up glow; attach localized warm light to the hand silhouette.
 - Render entry/hold/exit frames and preview, run regression checks, review and commit.
 
+### Phase 6: Hold the ending inside the story
+**Status:** complete (30fps preview verified; pre-existing default-composition configuration blocked separately)
+- Remove returning cover/credits, retain the clinging pose and horizon through the tail.
+- Replace expanding bright rays with faint distant light; soften the background and settle motion without resolving the loss.
+- Render final lyric/tail/fade, run regression checks and save a local checkpoint.
+
 ## Next Step
-User review of out/twilight-refined-196-218.mp4 and out/twilight-refined-206.png. Final 67 tests, ESLint src, TypeScript and diff checks passed. Hand gestures, lyrics, and full export remain outside this refinement.
+Review out/ending-held-236-283.mp4. Resolve the pre-existing Root.tsx 60fps / 30fps-duration mismatch separately before default full export; full lint/tsc also flag its unused FPS import. This task leaves that file untouched/uncommitted. No full MV export or uninterrupted audio-visual playback performed.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.

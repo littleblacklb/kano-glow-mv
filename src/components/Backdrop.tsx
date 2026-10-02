@@ -40,7 +40,7 @@ export const Sky: React.FC<{ t: number; handCloseUp?: boolean }> = ({ t, handClo
 export const Vignette: React.FC<{ t: number }> = ({ t }) => (
   <AbsoluteFill
     style={{
-      opacity: 1 - Math.max(envelope(t, W.character), envelope(t, W.outro)),
+      opacity: 1 - envelope(t, W.character),
       background: "radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(10,6,12,0.34) 100%)",
     }}
   />

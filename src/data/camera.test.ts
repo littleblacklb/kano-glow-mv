@@ -9,9 +9,9 @@ const [WIDTH, HEIGHT] = [1920, 1080];
 const FPS = 30;
 
 describe("cameraAt", () => {
-  test("the cover scenes are never scaled", () => {
+  test("the opening cover is unscaled, the ending holds its framing", () => {
     for (let t = 0; t <= W.character[3]; t += 0.5) expect(cameraAt(t).scale, `t=${t}`).toBe(1);
-    for (let t = W.outro[1]; t <= 284; t += 0.5) expect(cameraAt(t).scale, `t=${t}`).toBe(1);
+    for (let t = 250; t <= 284; t += 0.5) expect(cameraAt(t).scale, `t=${t}`).toBe(1.5);
   });
 
   test("every pose is pushed in slowly, and only ぎゅっとしがみついた closes in further", () => {
@@ -24,8 +24,8 @@ describe("cameraAt", () => {
   });
 
   test("the camera drifts, it never jumps where the wide shot can be seen", () => {
-    // the closing push peaks near 0.06 per second; the reset at 262–263 happens on flat cover red
-    for (let f = 0; f < 262 * FPS; f++) {
+    // The closing push peaks near 0.06 per second and never resets during the tail.
+    for (let f = 0; f < 284 * FPS; f++) {
       if (closeUpCover(f / FPS) === 1 && closeUpCover((f + 1) / FPS) === 1) continue;
       const d = Math.abs(cameraAt((f + 1) / FPS).scale - cameraAt(f / FPS).scale);
       expect(d * FPS, `t=${f / FPS}`).toBeLessThan(0.08);
@@ -75,10 +75,10 @@ describe("CLOSE_UPS", () => {
     expect(closeUpCover(firstFrame("私の中の君を奪ってしまう") / FPS)).toBe(0);
   });
 
-  test("close-ups stay clear of the cover scenes and of each other", () => {
+  test("close-ups stay clear of the opening, final held pose and each other", () => {
     for (const c of CLOSE_UPS) {
       expect(c.window[0]).toBeGreaterThan(W.character[3]);
-      expect(c.window[3]).toBeLessThan(W.outro[0]);
+      expect(c.window[3]).toBeLessThan(227);
     }
     for (let i = 1; i < CLOSE_UPS.length; i++)
       expect(CLOSE_UPS[i].window[0]).toBeGreaterThan(CLOSE_UPS[i - 1].window[3]);

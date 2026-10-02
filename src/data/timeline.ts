@@ -7,7 +7,7 @@ export const INK = "#1A1414";
 
 type SkyKey = { t: number; top: string; bottom: string };
 
-// The color journey: cover red → cold rain → sunset → deep red → night → torn-cloud light → red.
+// The color journey: cover red → cold rain → sunset → deep red → night → faint cloud light → night.
 const SKY: SkyKey[] = [
   { t: 0, top: COVER_RED, bottom: COVER_RED },
   { t: 22, top: COVER_RED, bottom: COVER_RED },
@@ -25,10 +25,10 @@ const SKY: SkyKey[] = [
   { t: 206, top: "#14172F", bottom: "#50354B" }, // hand reaches before dusk disappears
   { t: 214.2, top: "#141930", bottom: "#2B2B4B" }, // full night only after the light escapes
   { t: 226, top: "#1A1F3C", bottom: "#4A2846" },
-  { t: 242, top: "#3C4270", bottom: "#E2A486" }, // 雲間
-  { t: 256, top: "#6E5C7E", bottom: "#F4CCA4" },
-  { t: 263, top: COVER_RED, bottom: COVER_RED },
-  { t: 284, top: COVER_RED, bottom: COVER_RED },
+  { t: 242, top: "#23283F", bottom: "#654A57" }, // a little light through clouds, not a new dawn
+  { t: 256, top: "#191E31", bottom: "#3C3045" },
+  { t: 275, top: "#101522", bottom: "#262332" },
+  { t: 284, top: "#101522", bottom: "#262332" },
 ];
 
 const TS = SKY.map((k) => k.t);
@@ -51,15 +51,14 @@ export const W = {
   title: [14.5, 15.5, 22.5, 25],
   rain: [24, 32, 58, 72],
   inkBleed: [36, 40, 56, 64],
-  horizon: [25, 32, 256, 262],
+  horizon: [25, 32, 283, 284],
   sun: [70, 82, 165, 178],
   clouds: [100, 108, 130, 140],
   scars: [133, 134, 162, 170],
   stars: [174, 184, 228, 240],
   afterglow: [172, 181, 204, 214.2],
   tornClouds: [222, 228, 252, 258],
-  lightLeak: [228, 240, 254, 262],
-  outro: [258, 263, 283, 284],
+  lightLeak: [228, 240, 248, 282],
   fadeToBlack: [-1, 1.2, 275, 282], // interpolate needs strictly increasing input
 } satisfies Record<string, [number, number, number, number]>;
 

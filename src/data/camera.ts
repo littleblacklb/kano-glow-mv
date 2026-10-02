@@ -8,8 +8,7 @@ export const CAMERA_ORIGIN: [number, number] = [LYRIC_COLUMN_LEFT, 0.86];
 
 // Each pose gets a slow push-in while it holds (to 1.08), easing back while it crossfades into the next;
 // a close-up hides the reset when it cuts in.
-// ぎゅっとしがみついた closes in on her and the shadow 君 gathers into, and holds while the world fades to
-// the cover red, where the camera can reset unseen.
+// ぎゅっとしがみついた closes in on her and holds there through the tail: no return to the cover.
 export const PUSH: [number, number][] = [
   [30, 1], // rain
   [66, 1.08],
@@ -30,8 +29,7 @@ export const PUSH: [number, number][] = [
   [227, 1], // cling
   [238, 1.06],
   [250, 1.5],
-  [262, 1.5],
-  [263, 1],
+  [284, 1.5],
 ];
 
 export const MAX_PUSH = 1.08;

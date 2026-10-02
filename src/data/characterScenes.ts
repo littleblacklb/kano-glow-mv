@@ -101,7 +101,7 @@ export const CHARACTER_SCENES: CharacterScene[] = [
   {
     id: "cling",
     aspect: 492 / 1288,
-    window: [227, 232, 252, 258],
+    window: [227, 232, 283, 284],
     x: 0.64,
     h: 0.36,
     tint: 0.35,

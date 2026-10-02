@@ -1,5 +1,5 @@
 import { noise2D } from "@remotion/noise";
-import { AbsoluteFill, Easing, interpolate, random, useVideoConfig } from "remotion";
+import { AbsoluteFill, Easing, interpolate, useVideoConfig } from "remotion";
 import { CREAM, envelope, INK, skyAt, W } from "../data/timeline";
 import { boilFrame, mix, onThrees, wobblyCircle, wobblyLine } from "../lib/draw";
 
@@ -166,7 +166,7 @@ export const TornClouds: React.FC<{ t: number }> = ({ t }) => {
     extrapolateRight: "clamp",
     easing: Easing.inOut(Easing.sin),
   });
-  const lit = interpolate(t, [222, 250], [0.12, 0.55], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const lit = interpolate(t, [222, 250], [0.12, 0.22], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const fill = mix(skyAt(t).top, CREAM, lit);
   const y = height * 0.4;
 
@@ -185,57 +185,17 @@ export const TornClouds: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-const MOTES = 70;
-
-// Warm light from the gap, with slow rays and motes drifting upward (溢れ出す涙).
-export const LightLeak: React.FC<{ t: number }> = ({ t }) => {
-  const { width, height } = useVideoConfig();
+// A small remnant at the horizon, never a growing burst or a promise of dawn.
+export const DistantLight: React.FC<{ t: number }> = ({ t }) => {
   const vis = envelope(t, W.lightLeak);
   if (vis === 0) return null;
-  const tq = onThrees(t);
-  const cx = width / 2;
-  const cy = height * 0.42;
-  const size = interpolate(t, [228, 252], [500, 2300], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-
   return (
-    <AbsoluteFill style={{ opacity: vis }}>
-      <div
-        style={{
-          position: "absolute",
-          left: cx - size / 2,
-          top: cy - size / 2,
-          width: size,
-          height: size,
-          borderRadius: "50%",
-          mixBlendMode: "screen",
-          background: "radial-gradient(circle, rgba(255,236,200,0.9) 0%, rgba(255,210,160,0.4) 22%, transparent 60%)",
-        }}
-      />
-      <svg width={width} height={height} style={{ mixBlendMode: "screen" }}>
-        <g transform={`rotate(${tq * 1.6} ${cx} ${cy})`}>
-          {Array.from({ length: 10 }, (_, i) => {
-            const a = (i / 10) * Math.PI * 2;
-            const spread = 0.05;
-            const L = width * 1.2;
-            return (
-              <path
-                key={i}
-                d={`M${cx},${cy}L${cx + Math.cos(a - spread) * L},${cy + Math.sin(a - spread) * L}L${cx + Math.cos(a + spread) * L},${cy + Math.sin(a + spread) * L}Z`}
-                fill="#FFE6C4"
-                opacity={0.07}
-              />
-            );
-          })}
-        </g>
-        {Array.from({ length: MOTES }, (_, i) => {
-          const period = 8 + random(`mp${i}`) * 7;
-          const phase = random(`mo${i}`) * period;
-          const p = ((tq + phase) % period) / period;
-          const x = random(`mx${i}`) * width + Math.sin((tq + phase) * 0.9) * 18;
-          const y = height * 1.05 - p * height * 1.15;
-          return <circle key={i} cx={x} cy={y} r={1.6 + random(`mr${i}`) * 2.6} fill={CREAM} opacity={0.7 * Math.sin(p * Math.PI)} />;
-        })}
-      </svg>
-    </AbsoluteFill>
+    <AbsoluteFill
+      style={{
+        opacity: vis * 0.32,
+        background: "radial-gradient(ellipse 20% 6% at 34% 74%, rgba(220,145,124,0.65), rgba(153,95,114,0.24) 48%, transparent 100%)",
+        pointerEvents: "none",
+      }}
+    />
   );
 };

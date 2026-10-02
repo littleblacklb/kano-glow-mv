@@ -7,10 +7,11 @@ import { Camera } from "./components/Camera";
 import { Character, CloseUps, SceneCharacters } from "./components/Character";
 import { Lyrics } from "./components/Lyrics";
 import { ScarLines } from "./components/ScarLines";
-import { Clouds, Horizon, LightLeak, Sun, TornClouds } from "./components/Scenery";
-import { Credits, TitleCard } from "./components/Titles";
+import { Clouds, DistantLight, Horizon, Sun, TornClouds } from "./components/Scenery";
+import { TitleCard } from "./components/Titles";
 import { InkBleed, Rain, Stars } from "./components/Weather";
 import { envelope, W } from "./data/timeline";
+import { endingAt } from "./data/ending";
 import { parseLrc, type LyricLine } from "./lib/parseLrc";
 
 const AUDIO = staticFile("glow.mp3");
@@ -64,11 +65,14 @@ export const GlowMV: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Camera t={t}>
-        <Sky t={t} />
-        <Stars t={t} amp={amp} />
-        <Sun t={t} amp={amp} />
-        <Clouds t={t} />
-        <Horizon t={t} />
+        <AbsoluteFill style={{ filter: `blur(${endingAt(t).backgroundBlur}px)` }}>
+          <Sky t={t} />
+          <Stars t={t} amp={amp} />
+          <Sun t={t} amp={amp} />
+          <Clouds t={t} />
+          <DistantLight t={t} />
+          <Horizon t={t} />
+        </AbsoluteFill>
       </Camera>
       <CloseUps t={t} />
       <Camera t={t}>
@@ -77,12 +81,10 @@ export const GlowMV: React.FC = () => {
         <ScarLines t={t} />
         <SceneCharacters t={t} />
         <TornClouds t={t} />
-        <LightLeak t={t} />
       </Camera>
       <Character t={t} amp={amp} />
       <TitleCard t={t} />
       {lines && <Lyrics lines={lines} scrim={envelope(t, W.horizon)} />}
-      <Credits t={t} />
       <Grain t={t} />
       <Vignette t={t} />
       <FadeToBlack t={t} />

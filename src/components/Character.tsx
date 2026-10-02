@@ -12,6 +12,7 @@ import {
 import { CLOSE_UPS, closeUpCover, closeUpPush, type CloseUp } from "../data/camera";
 import { envelope, skyAt, W } from "../data/timeline";
 import { afterglowAt } from "../data/afterglow";
+import { endingAt } from "../data/ending";
 import { boilFrame, mix, onThrees, ramp } from "../lib/draw";
 import { erasePolygons, revealPolygons, toClipPath } from "../lib/strokes";
 import { Sky } from "./Backdrop";
@@ -27,10 +28,10 @@ const breathe = (t: number, amp: number, origin = "50% 100%") => ({
   rotate: `${Math.sin((t / 5.3) * Math.PI * 2) * 0.45}deg`,
 });
 
-// The jacket character, only in the intro and outro, standing where the cover places her.
+// The jacket character, only in the intro, standing where the cover places her.
 export const Character: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
   const { width, height } = useVideoConfig();
-  const vis = Math.max(envelope(t, W.character), envelope(t, W.outro));
+  const vis = envelope(t, W.character);
   if (vis === 0) return null;
   const h = height * 0.86;
   const w = h * ASPECT;
@@ -177,6 +178,7 @@ const SceneCharacter: React.FC<{
   const { width, height } = useVideoConfig();
   const her = placeScene(scene, width, height, (x) => groundY(x, height));
   const id = scene.id;
+  const poseTime = id === "cling" ? endingAt(t).poseTime : t;
   const img = staticFile(`characters/${id}.png`);
   const k = kimiAt(t);
   const kimi =
@@ -214,7 +216,7 @@ const SceneCharacter: React.FC<{
           left: her.left,
           top: her.top,
           filter: `url(#tint-${id})`,
-          ...breathe(onThrees(t), 0, her.origin),
+          ...breathe(onThrees(poseTime), 0, her.origin),
         }}
       />
     </AbsoluteFill>
