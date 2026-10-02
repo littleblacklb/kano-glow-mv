@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, interpolate, random, useVideoConfig } from "remotion";
 import { CREAM, envelope, W } from "../data/timeline";
+import { afterglowAt } from "../data/afterglow";
 import { boilFrame, clamp01, onThrees, wobblyCircle } from "../lib/draw";
 
 const RAIN_DROPS = 170;
@@ -133,67 +134,23 @@ export const Stars: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
   );
 };
 
-// 赤く染まる指先に / 零れ落ちそうな赤: red ink drops fall into the night and stain it.
-const DROP_TIMES = [203.9, 205.4, 207.0, 208.8, 210.4, 212.2, 214.4, 216.3, 218.6, 221.0, 223.4];
-const FALL_S = 1.1;
-
-export const RedDrops: React.FC<{ t: number }> = ({ t }) => {
+// The last dusk light slips away: broad, translucent, with no drop or stain edges.
+export const Afterglow: React.FC<{ t: number }> = ({ t }) => {
   const { width, height } = useVideoConfig();
-  const vis = envelope(t, W.redDrops);
-  if (vis === 0) return null;
-  const b = boilFrame(t);
+  const light = afterglowAt(t);
+  if (light.opacity === 0) return null;
 
   return (
-    <AbsoluteFill style={{ opacity: vis }}>
+    <AbsoluteFill style={{ opacity: light.opacity, mixBlendMode: "screen", pointerEvents: "none" }}>
       <svg width={width} height={height}>
         <defs>
-          <filter id="stain" x="-50%" y="-50%" width="200%" height="200%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves={2} seed={3} />
-            <feDisplacementMap in="SourceGraphic" scale={28} />
-          </filter>
+          <radialGradient id="dusk-afterglow">
+            <stop offset="0" stopColor="#E9A084" stopOpacity={0.8} />
+            <stop offset="0.45" stopColor="#C98279" stopOpacity={0.35} />
+            <stop offset="1" stopColor="#C98279" stopOpacity={0} />
+          </radialGradient>
         </defs>
-        {DROP_TIMES.map((at, i) => {
-          if (t < at) return null;
-          const x = (0.07 + random(`dx${i}`) * 0.55) * width;
-          const landY = (0.5 + random(`dy${i}`) * 0.3) * height;
-          const fall = interpolate(t, [at, at + FALL_S], [0, 1], {
-            extrapolateRight: "clamp",
-            easing: Easing.in(Easing.quad),
-          });
-          const bloom = interpolate(t, [at + FALL_S, at + FALL_S + 2.6], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: Easing.out(Easing.cubic),
-          });
-          const y = -60 + (landY + 60) * fall;
-          const maxR = 55 + random(`dr${i}`) * 85;
-          return (
-            <g key={i}>
-              {fall < 1 && (
-                <path
-                  d={`M${x},${y - 34}C${x + 4},${y - 16} ${x + 15},${y - 4} ${x + 15},${y + 6}A15,15 0 1 1 ${x - 15},${y + 6}C${x - 15},${y - 4} ${x - 4},${y - 16} ${x},${y - 34}Z`}
-                  fill="#DA3540"
-                />
-              )}
-              {bloom > 0 && (
-                <g filter="url(#stain)">
-                  <path
-                    d={wobblyCircle(x, landY, maxR * bloom, `drop${i}`, b, 4)}
-                    fill="#C8303A"
-                    fillOpacity={0.78 - bloom * 0.3}
-                  />
-                  <path
-                    d={wobblyCircle(x, landY, maxR * bloom, `drop${i}`, b, 4)}
-                    fill="none"
-                    stroke="#E8505A"
-                    strokeWidth={5}
-                    strokeOpacity={0.7}
-                  />
-                </g>
-              )}
-            </g>
-          );
-        })}
+        <ellipse cx={width * 0.36} cy={height * light.y} rx={width * 0.36} ry={height * 0.38} fill="url(#dusk-afterglow)" />
       </svg>
     </AbsoluteFill>
   );

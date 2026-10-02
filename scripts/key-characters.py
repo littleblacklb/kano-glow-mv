@@ -13,6 +13,9 @@ pen relative to her height without clogging the tights' stripes. The close-ups
 are drawn near full size and 君 is only ever a shadow, so both are left as is.
 """
 from pathlib import Path
+import sys
+
+from retouch_hand import retouch_hand
 
 import numpy as np
 from PIL import Image
@@ -30,6 +33,8 @@ CREAM = np.array([255, 248, 220.0])  # backing for the erosion, the poses' own f
 
 OUT.mkdir(exist_ok=True)
 for src in sorted(SRC.glob("*.png")):
+    if sys.argv[1:] and src.stem not in sys.argv[1:]:
+        continue
     im = np.array(Image.open(src).convert("RGB")).astype(float)
     greenness = im[..., 1] - np.maximum(im[..., 0], im[..., 2])
     corners = np.concatenate([im[:40, :40], im[:40, -40:], im[-40:, :40], im[-40:, -40:]]).reshape(-1, 3)
@@ -60,6 +65,8 @@ for src in sorted(SRC.glob("*.png")):
         fg = np.stack([ndimage.grey_erosion(flat[..., c], footprint=disk) for c in range(3)], -1)
         alpha = ndimage.grey_dilation(alpha, footprint=disk)
     rgba = np.dstack([fg, alpha * 255]).round().astype(np.uint8)[y0:y1, x0:x1]
+    if src.stem == "close-hand":
+        rgba = retouch_hand(rgba)
     out = OUT / src.name
     Image.fromarray(rgba, "RGBA").save(out, optimize=True)
     print(f"{src.stem}: bg={tuple(bg.astype(int).tolist())} size={rgba.shape[1]}x{rgba.shape[0]} -> {out.relative_to(ROOT)}")

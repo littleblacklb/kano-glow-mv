@@ -245,7 +245,11 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
   return (
     <AbsoluteFill style={{ opacity: vis }}>
       <Sky t={t} />
-      <FigureFilter id={`tint-${shot.id}`} t={t} tint={pose.tint} />
+      <FigureFilter
+        id={`tint-${shot.id}`}
+        t={t}
+        tint={pose.tint - (shot.id === "close-hand" ? envelope(t, W.afterglow) * 0.1 : 0)}
+      />
       {/* pushed in around the middle of the cut edge, which stays below the frame */}
       <AbsoluteFill style={{ transformOrigin: `${cx}px ${bottom}px`, scale: String(closeUpPush(shot, t)) }}>
         <Figure

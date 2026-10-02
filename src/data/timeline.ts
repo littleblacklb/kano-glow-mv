@@ -22,7 +22,8 @@ const SKY: SkyKey[] = [
   { t: 172, top: "#3A2646", bottom: "#78384E" },
   { t: 181, top: "#10152C", bottom: "#262B50" }, // 夜になるだけ
   { t: 201, top: "#10152C", bottom: "#2A2A52" },
-  { t: 206, top: "#171833", bottom: "#62223A" }, // 赤く染まる指先
+  { t: 206, top: "#171833", bottom: "#554052" }, // a muted dusk reflection, not blood red
+  { t: 214.2, top: "#181C37", bottom: "#39304D" }, // warmth recedes as the hand leaves
   { t: 226, top: "#1A1F3C", bottom: "#4A2846" },
   { t: 242, top: "#3C4270", bottom: "#E2A486" }, // 雲間
   { t: 256, top: "#6E5C7E", bottom: "#F4CCA4" },
@@ -55,7 +56,7 @@ export const W = {
   clouds: [100, 108, 130, 140],
   scars: [133, 134, 162, 170],
   stars: [174, 184, 228, 240],
-  redDrops: [203, 204, 226, 232],
+  afterglow: [203, 206, 208.5, 226],
   tornClouds: [222, 228, 252, 258],
   lightLeak: [228, 240, 254, 262],
   outro: [258, 263, 283, 284],
