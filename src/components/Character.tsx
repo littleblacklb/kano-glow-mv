@@ -244,7 +244,7 @@ const CloseUpShot: React.FC<{ shot: CloseUp; t: number; vis: number }> = ({ shot
 
   return (
     <AbsoluteFill style={{ opacity: vis }}>
-      <Sky t={t} />
+      <Sky t={t} handCloseUp={shot.id === "close-hand"} />
       <FigureFilter
         id={`tint-${shot.id}`}
         t={t}

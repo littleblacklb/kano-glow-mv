@@ -15,8 +15,14 @@ Remove blood-like fingertip stains and drops around 3:26 while preserving compos
 - Run tests/lint, render 206s and transition preview.
 - Keep lyrics unchanged unless this recording can be verified.
 
+### Phase 4: Trial extended twilight
+**Status:** complete
+- Inspect and retain dusk before the hand shot, instead of returning to dusk after full night.
+- Delay dense stars; make the sky-sourced coral band visible during the hand shot and fade into night.
+- Render comparison frames/transition; run regression checks. This trial does not add hand animation.
+
 ## Next Step
-User review of the rendered still and 28-second preview. Full MV export and recording-specific lyric verification are not performed.
+User review of out/twilight-trial-174-220.mp4 and out/twilight-trial-206.png. If accepted, proceed separately with the discussed reaching/half-closing hand animation; that animation is not part of this isolated timing trial.
 
 ## Errors Encountered
 - Initial git inspection at workspace parent failed; repository is nested at mv/, clean baseline confirmed there.

@@ -14,3 +14,12 @@
 - Asset checks passed: unchanged dimensions, alpha differences confined to external drop region, no bright red pigment, byte-identical regeneration. Initial color assertion's two hits were dark ink antialiasing; excluded dark linework from the pigment check.
 - Direct ESLint src, TypeScript and git diff --check passed. Reviewed task diff. Full MV not re-exported.
 - Audio listening/transcription unavailable through current tools; actual 鹿乃 word remains unverified. Lyrics deliberately unchanged.
+
+## Extended twilight trial
+- User approved keeping the last dusk alive before/during the hand, then completing night. Trial isolates timing/color; new hand poses are not implemented yet.
+- Dusk source now spans 172–214.2s, held through 204s then fades. Sky keeps a low coral band; the close-up reframes that same band at fingertip level. Base sky continuously darkens rather than warming back up at 206s.
+- Early star subset limited to 13 of 110 at 35% strength; remaining stars emerge over 204–216s (overall existing star window still applies).
+- Rendered and inspected out/twilight-trial-206.png: clearly visible coral band behind upper fingers, cool upper sky, subtitle region remains dark. This is a timing/color trial, not yet proof of the failed-grasp narrative.
+- 64 tests passed; direct ESLint src, TypeScript and git diff --check passed. No failing checks in this trial; Remotion emits only Node's module.register deprecation warning.
+- Rendered final out/twilight-trial-174-220.mp4 (46.06s, 960x540, H.264 + AAC). Inspected contact-sheet frames at 180, 196, 203.9, 206, 211, 216s: dusk persists before the hand, a framed version crosses the fingertips, then vanishes before the full-star wide shot. Wide/close-up band positions are separate to prevent the wide horizon sliding upward during the dissolve.
+- Validation boundary: sampled rendered frames, not uninterrupted audiovisual playback. No full MV export, no lyric/audio changes, no new hand animation. User visual acceptance pending.

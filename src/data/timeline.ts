@@ -20,10 +20,10 @@ const SKY: SkyKey[] = [
   { t: 130, top: "#8A2430", bottom: "#C0463E" }, // 傷跡
   { t: 160, top: "#7E2230", bottom: "#B03C3C" },
   { t: 172, top: "#3A2646", bottom: "#78384E" },
-  { t: 181, top: "#10152C", bottom: "#262B50" }, // 夜になるだけ
-  { t: 201, top: "#10152C", bottom: "#2A2A52" },
-  { t: 206, top: "#171833", bottom: "#554052" }, // a muted dusk reflection, not blood red
-  { t: 214.2, top: "#181C37", bottom: "#39304D" }, // warmth recedes as the hand leaves
+  { t: 181, top: "#15182F", bottom: "#694052" }, // night above, the last dusk still below
+  { t: 201, top: "#14172F", bottom: "#59384D" },
+  { t: 206, top: "#14172F", bottom: "#50354B" }, // hand reaches before dusk disappears
+  { t: 214.2, top: "#141930", bottom: "#2B2B4B" }, // full night only after the light escapes
   { t: 226, top: "#1A1F3C", bottom: "#4A2846" },
   { t: 242, top: "#3C4270", bottom: "#E2A486" }, // 雲間
   { t: 256, top: "#6E5C7E", bottom: "#F4CCA4" },
@@ -56,7 +56,7 @@ export const W = {
   clouds: [100, 108, 130, 140],
   scars: [133, 134, 162, 170],
   stars: [174, 184, 228, 240],
-  afterglow: [203, 206, 208.5, 226],
+  afterglow: [172, 181, 204, 214.2],
   tornClouds: [222, 228, 252, 258],
   lightLeak: [228, 240, 254, 262],
   outro: [258, 263, 283, 284],

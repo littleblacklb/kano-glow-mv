@@ -1,6 +1,7 @@
 import { AbsoluteFill, Easing, interpolate, random, useVideoConfig } from "remotion";
 import { CREAM, envelope, W } from "../data/timeline";
-import { afterglowAt } from "../data/afterglow";
+import { afterglowAt, starRevealAt } from "../data/afterglow";
+import { closeUpCover } from "../data/camera";
 import { boilFrame, clamp01, onThrees, wobblyCircle } from "../lib/draw";
 
 const RAIN_DROPS = 170;
@@ -115,7 +116,9 @@ export const Stars: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
           if (x > width * 0.74 && y > height * 0.08) return null;
           const tw = Math.abs(Math.sin(tq * (0.6 + random(`ss${i}`) * 1.6) + random(`sp${i}`) * 6.28));
           const big = i % 14 === 0;
-          const o = clamp01(0.25 + tw * 0.6 + amp * 0.35);
+          // Sparse points while the lower sky still holds dusk; no glittering full night yet.
+          const reveal = starRevealAt(t, i);
+          const o = clamp01(0.25 + tw * 0.6 + amp * 0.35) * reveal;
           if (big) {
             const s = 9 + tw * 5;
             return (
@@ -138,19 +141,20 @@ export const Stars: React.FC<{ t: number; amp: number }> = ({ t, amp }) => {
 export const Afterglow: React.FC<{ t: number }> = ({ t }) => {
   const { width, height } = useVideoConfig();
   const light = afterglowAt(t);
-  if (light.opacity === 0) return null;
+  const opacity = light.opacity * closeUpCover(t);
+  if (opacity === 0) return null;
 
   return (
-    <AbsoluteFill style={{ opacity: light.opacity, mixBlendMode: "screen", pointerEvents: "none" }}>
+    <AbsoluteFill style={{ opacity, mixBlendMode: "screen", pointerEvents: "none" }}>
       <svg width={width} height={height}>
         <defs>
           <radialGradient id="dusk-afterglow">
-            <stop offset="0" stopColor="#E9A084" stopOpacity={0.8} />
-            <stop offset="0.45" stopColor="#C98279" stopOpacity={0.35} />
-            <stop offset="1" stopColor="#C98279" stopOpacity={0} />
+            <stop offset="0" stopColor="#F07860" stopOpacity={0.95} />
+            <stop offset="0.45" stopColor="#D96F67" stopOpacity={0.55} />
+            <stop offset="1" stopColor="#D96F67" stopOpacity={0} />
           </radialGradient>
         </defs>
-        <ellipse cx={width * 0.36} cy={height * light.y} rx={width * 0.36} ry={height * 0.38} fill="url(#dusk-afterglow)" />
+        <ellipse cx={width * 0.36} cy={height * light.y} rx={width * 0.43} ry={height * 0.17} fill="url(#dusk-afterglow)" />
       </svg>
     </AbsoluteFill>
   );

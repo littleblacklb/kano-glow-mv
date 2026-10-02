@@ -71,7 +71,7 @@ export const GlowMV: React.FC = () => {
         <Horizon t={t} />
       </Camera>
       <CloseUps t={t} />
-      {/* Continuous dusk illumination across the close-up and its return to the wide shot. */}
+      {/* Fingertip reflection of the same dusk band drawn by Sky, gone before full night. */}
       <Afterglow t={t} />
       <Camera t={t}>
         <Rain t={t} />

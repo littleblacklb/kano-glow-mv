@@ -1,10 +1,25 @@
 import { AbsoluteFill, Img, random, staticFile } from "remotion";
 import { boilFrame } from "../lib/draw";
 import { envelope, skyAt, W } from "../data/timeline";
+import { afterglowAt } from "../data/afterglow";
 
-export const Sky: React.FC<{ t: number }> = ({ t }) => {
+export const Sky: React.FC<{ t: number; handCloseUp?: boolean }> = ({ t, handCloseUp = false }) => {
   const { top, bottom } = skyAt(t);
-  return <AbsoluteFill style={{ background: `linear-gradient(to bottom, ${top} 0%, ${bottom} 100%)` }} />;
+  const dusk = afterglowAt(t);
+  // The insert reframes the same low dusk band behind the fingertips.
+  const bandY = handCloseUp ? dusk.y * 100 : 68;
+  return (
+    <AbsoluteFill style={{ background: `linear-gradient(to bottom, ${top} 0%, ${bottom} 100%)` }}>
+      {dusk.skyOpacity > 0 && (
+        <AbsoluteFill
+          style={{
+            opacity: dusk.skyOpacity,
+            background: `radial-gradient(ellipse 58% 12% at 35% ${bandY}%, rgba(231,112,87,0.9) 0%, rgba(199,86,87,0.55) 38%, rgba(150,66,88,0.2) 68%, transparent 100%)`,
+          }}
+        />
+      )}
+    </AbsoluteFill>
+  );
 };
 
 // Kept off during the flat-red cover scenes so they match the jacket.
